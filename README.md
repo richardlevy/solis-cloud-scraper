@@ -119,3 +119,4 @@ An example config looks like:
 ## Restrictions/Limitations
 * The scraper choses the first plant on the list presented at soliscloud.com
 * Returned values are the displayed values from the soliscloud website
+* When a notification is posted to the soliscloud website, e.g upcoming maintenance announcement, this will need to be manually cleared by logging in to the website and clicking the OK button (or similar).
