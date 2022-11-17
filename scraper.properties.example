@@ -1,0 +1,19 @@
+# Starter template for properties - add in <missing properties>
+# Copy to scraper.properties
+# See readme.md for more info
+
+# Details for accessing solis cloud used by scraper.js
+solis.url = https://soliscloud.com
+solis.username = <your solis cloud username>
+solis.password = <your solis cloud password>
+service.port = 5561
+
+# Authentication details shared by scraper.js and refresher.js
+service.username = <choose a username>
+service.password = <choose a password>
+
+# Details to refresh the scraped data used by refresher.js
+service.refresh.url = http://<your IP address>:5561/refresh
+refresh.interval-mins = 6
+refresh.start-hour = 6
+refresh.end-hour = 23
