@@ -39,8 +39,14 @@ async function scrapeData() {
 
 		await page.goto(url);
 
+		try {
+			await page.click(".username input")
+		}	catch (err) {
+    	console.log("Reloading page as empty")
+			await page.goto(url);
+		}
+
 		// Fill in username and password
-		await page.click(".username input")
 		await page.type(".username input", username)
 		await page.click(".username_pwd.el-input input")
 		await page.type(".username_pwd.el-input input", password)
