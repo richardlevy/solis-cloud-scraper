@@ -161,7 +161,7 @@ async function scrapeData() {
 		}
 
 	} catch (e) {
-
+		console.log("Error - " + e.message)
 		await browser.close()
 		throw (e);
 	}
@@ -189,6 +189,27 @@ async function getData() {
 }
 
 var data = []
+
+function initialiseData() {
+	const time = Date.now();
+	 data = new Map([
+		['totalYield',""],
+		['currentGen',""],
+		['batteryCharge',""],
+		['drawFromBattery',""],
+		['todaysCharging',""],
+		['todaysDischarging',""],
+		['todayFromGrid',""],
+		['todayToGrid',""],
+		['currentGridInOut',""],
+		['currentHouseDraw',""],
+		['totalHouseConsumption',""],
+		['scrapeStartDurationMs', time],
+		['scrapeEndTimeMs',time],
+		])
+
+}
+initialiseData()
 
 app.get('/data', (req, res) => {
   return res.send(Object.fromEntries(data));
