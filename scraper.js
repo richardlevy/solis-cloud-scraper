@@ -39,8 +39,14 @@ async function scrapeData() {
 
 		await page.goto(url);
 
+		try {
+			await page.click(".username input")
+		}	catch (err) {
+    	console.log("Reloading page as empty")
+			await page.goto(url);
+		}
+
 		// Fill in username and password
-		await page.click(".username input")
 		await page.type(".username input", username)
 		await page.click(".username_pwd.el-input input")
 		await page.type(".username_pwd.el-input input", password)
@@ -168,7 +174,7 @@ async function scrapeData() {
 		}
 
 	} catch (e) {
-
+		console.log("Error - " + e.message)
 		await browser.close()
 		throw (e);
 	}
@@ -196,6 +202,27 @@ async function getData() {
 }
 
 var data = []
+
+function initialiseData() {
+	const time = Date.now();
+	 data = new Map([
+		['totalYield',""],
+		['currentGen',""],
+		['batteryCharge',""],
+		['drawFromBattery',""],
+		['todaysCharging',""],
+		['todaysDischarging',""],
+		['todayFromGrid',""],
+		['todayToGrid',""],
+		['currentGridInOut',""],
+		['currentHouseDraw',""],
+		['totalHouseConsumption',""],
+		['scrapeStartDurationMs', time],
+		['scrapeEndTimeMs',time],
+		])
+
+}
+initialiseData()
 
 app.get('/data', (req, res) => {
   return res.send(Object.fromEntries(data));
