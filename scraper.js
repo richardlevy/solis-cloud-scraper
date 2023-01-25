@@ -29,7 +29,7 @@ async function scrapeData() {
 	const startTime = Date.now();
 
 	const browser = await puppeteer.launch({
-		headless:true,
+		headless:false,
 		args: ['--no-zygote', '--no-sandbox']
 	});
 
@@ -55,6 +55,13 @@ async function scrapeData() {
 
 		// Wait for page load then click on the table to go to station overview
 		await page.waitForTimeout(5000)
+
+		// Think we can grab the station capacity here
+		await page.waitForSelector(".el-table__row");
+
+		const stationElement = await popup.$('.el-table__row .el-table_1_column_8 .cell')
+		const stationCapacity = await (await stationElement.getProperty('textContent')).jsonValue()
+
 		// await page.waitForSelector(".el-table__body-wrapper tr");
 		await page.click(".el-table__body-wrapper tr")
 	  await page.waitForTimeout(5000)
@@ -155,6 +162,7 @@ async function scrapeData() {
 				['totalHouseConsumption',totalHouseConsumption],
 				['scrapeStartDurationMs', startTime],
 				['scrapeEndTimeMs',endTime],
+				['stationCapacity',stationCapacity],
 				])
 
 			return data
