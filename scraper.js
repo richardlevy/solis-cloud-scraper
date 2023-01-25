@@ -219,6 +219,7 @@ function initialiseData() {
 		['totalHouseConsumption',""],
 		['scrapeStartDurationMs', time],
 		['scrapeEndTimeMs',time],
+		['stationCapacity',""],
 		])
 
 }
