@@ -6,6 +6,7 @@
 solis.url = https://soliscloud.com
 solis.username = <your solis cloud username>
 solis.password = <your solis cloud password>
+solis.maxSelectorRetries = 5
 service.port = 5561
 
 # Authentication details shared by scraper.js and refresher.js
