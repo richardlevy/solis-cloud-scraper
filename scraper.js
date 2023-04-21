@@ -113,11 +113,11 @@ async function scrapeData() {
 		const currentGridInOut = await (await currentGridInOutElement.getProperty('textContent')).jsonValue()
 
 		// House draw now
-		const currentHouseDrawElement = await popup.$('.animation > .wrap > .grid-side > .content > span')
+		const currentHouseDrawElement = await popup.$('.animation > .wrap > .yongdian > .content > span')
 		const currentHouseDraw = await (await currentHouseDrawElement.getProperty('textContent')).jsonValue()
 
 		// House consumption today
-		const totalHouseConsumptionElement = await popup.$('.animation > .wrap > .grid-side > .use-power > span:nth-child(2)')
+		const totalHouseConsumptionElement = await popup.$('.animation > .bottomtext-info > div > .yongdian-info > div > span:nth-child(2)')
 		const totalHouseConsumption = await (await totalHouseConsumptionElement.getProperty('textContent')).jsonValue()
 
 		await browser.close()
