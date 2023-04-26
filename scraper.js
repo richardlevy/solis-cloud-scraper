@@ -32,7 +32,7 @@ async function scrapeData() {
 
 	const browser = await puppeteer.launch({
 		headless:true,
-		args: ['--no-zygote', '--no-sandbox']
+		args: ['--no-zygote', '--no-sandbox','--single-process']
 	});
 
 	try {
