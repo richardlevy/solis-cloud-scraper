@@ -28,11 +28,14 @@ const maxSelectorRetries = properties.get("solis.maxSelectorRetries")
 
 async function scrapeData() {
 
+	const debug = true; 
+	var stage = "";
+
 	const startTime = Date.now();
 
 	const browser = await puppeteer.launch({
 		headless:true,
-		args: ['--no-zygote', '--no-sandbox','--single-process']
+		args: ['--no-zygote', '--no-sandbox']
 	});
 
 	try {
@@ -40,31 +43,37 @@ async function scrapeData() {
 		await page.setViewport({ width: 1200, height: 1000 });
 		await page.goto(url);
 
+		stage = "Waiting for login form";
 		await waitForSelectorWithRetries(page, '.username input', "Login page", maxSelectorRetries, 1000 )
 
 		// Fill in username and password
+		stage = "Completing for login form";
 		await page.click(".username input")
 		await page.type(".username input", username)
 		await page.click(".username_pwd.el-input input")
 		await page.type(".username_pwd.el-input input", password)
 
 		// Click privacy policy
+		stage = "Accepting privacy policy";
 		await page.evaluate(() => {
 			document.querySelector(".remember .el-checkbox__original").click()
 		})
 
 		// Click login button
+		stage = "Click login button";
 		await page.click(".login-btn button")
 
 		// Wait for page load then click on the table to go to station overview
 		await page.waitForTimeout(5000)
 
 		// Get station capacity - potential reload point
+		stage = "Getting station capacity";
 		await page.waitForSelector('.el-table__row .el-table_1_column_8 .cell')
 		const stationElement = await page.$('.el-table__row .el-table_1_column_8 .cell')
 		const stationCapacity = await (await stationElement.getProperty('textContent')).jsonValue()
 
 		// await page.waitForSelector(".el-table__body-wrapper tr");
+		stage = "Selecting station";
 		await page.click(".el-table__body-wrapper tr")
 	 	await page.waitForTimeout(5000)
 
@@ -74,50 +83,65 @@ async function scrapeData() {
 		let popup = pages[pages.length - 1];
 		await popup.setViewport({ width: 1200, height: 1000 });
 
-		await waitForSelectorWithRetries(popup, '.toptext-info > div > .fadian-info > div > span:nth-child(2)', "Current stats diagram" , maxSelectorRetries )
+		stage = "Waiting for current station stats";
+		await waitForSelectorWithRetries(popup, '#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(1) > span', "Current stats diagram" , maxSelectorRetries )
 
 		// Solar generation today
-		const totalYieldElement = await popup.$('.toptext-info > div > .fadian-info > div > span:nth-child(2)')
-		const totalYield = await (await totalYieldElement.getProperty('textContent')).jsonValue()
+		stage = "Getting solar generation today";
+		const totalYieldElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(1) > div.capsule.capsule-l.capsule-pv > div > p.info-val')
+		const totalYieldFull = await (await totalYieldElement.getProperty('textContent')).jsonValue()
+		const totalYield = trimAfterSpace(totalYieldFull)
+
 
 		// Solar generation now
-		const currentGenElement = await popup.$('.animation > .wrap > .fadian > .content > span') 
+		stage = "Getting solar generation now";
+		const currentGenElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(1) > span') 
 		const currentGen = await (await currentGenElement.getProperty('textContent')).jsonValue()
 
 		// Battery charge level now
-		const batteryChargeElement = await popup.$('.chongdian > .content > div > .batteryProgress > .colorBox1')
+		stage = "Getting battery charge";
+		const batteryChargeElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.battery-icon-box > div > p.battery-num')
 		const batteryCharge = await (await batteryChargeElement.getProperty('textContent')).jsonValue()
 
 		// Battery consumption now
-		const drawFromBatteryElement = await popup.$('.animation > .wrap > .chongdian > .content > span')
+		stage = "Getting current battery consumption ";
+		const drawFromBatteryElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > span')
 		const drawFromBattery = await (await drawFromBatteryElement.getProperty('textContent')).jsonValue()
 
 		// Battery charging today
-		const todaysChargingElement = await popup.$('.bottomtext-info > div > .chongdian-info > div:nth-child(1) > span:nth-child(2)')
+		stage = "Getting todays charging";
+		const todaysChargingElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.capsule.capsule-l.capsule-discharge > div.el-carousel.el-carousel--horizontal > div > div.el-carousel__item.is-active.is-animating > div > p.info-val')
 		const todaysCharging = await (await todaysChargingElement.getProperty('textContent')).jsonValue()
 
 		// Battery discharge today
-		const todaysDischargingElement = await popup.$('.bottomtext-info > div > .chongdian-info > div:nth-child(2) > span:nth-child(2)')
+		stage = "Getting todays discharge";
+		const todaysDischargingElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.capsule.capsule-l.capsule-discharge > div.el-carousel.el-carousel--horizontal > div > div.el-carousel__item.is-active.is-animating > div > p.info-val')
 		const todaysDischarging = await (await todaysDischargingElement.getProperty('textContent')).jsonValue()
 
 		// Today from grid
-		const todayFromElement = await popup.$('.toptext-info > div > .maidian-info > div:nth-child(1) > span:nth-child(2)')
-		const todayFromGrid = await (await todayFromElement.getProperty('textContent')).jsonValue()
+		stage = "Getting todays grid import";
+		const todayFromElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(2) > div > div.el-carousel.el-carousel--horizontal > div > div.el-carousel__item.is-active.is-animating > div > p.info-val')
+		const todayFromGridFull = await (await todayFromElement.getProperty('textContent')).jsonValue()
+		const todayFromGrid = trimAfterSpace(todayFromGridFull)
 
 		// Today to grid
-		const todayToElement = await popup.$('.toptext-info > div > .maidian-info > div:nth-child(2) > span:nth-child(2)')
-		const todayToGrid = await (await todayToElement.getProperty('textContent')).jsonValue()
+		const todayToElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(2) > div > div.el-carousel.el-carousel--horizontal > div > div.el-carousel__item.is-active.is-animating > div > p.info-val')
+		const todayToGridFull = await (await todayToElement.getProperty('textContent')).jsonValue()
+		const todayToGrid = trimAfterSpace(todayToGridFull)
 
 		// Grid in/out now
-		const currentGridInOutElement = await popup.$('.animation > .wrap > .maidian > .content > span')
+		stage = "Getting current grid import/export";
+		const currentGridInOutElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(2) > span')
 		const currentGridInOut = await (await currentGridInOutElement.getProperty('textContent')).jsonValue()
 
 		// House draw now
-		const currentHouseDrawElement = await popup.$('.animation > .wrap > .yongdian > .content > span')
+		stage = "Getting current house draw";
+		const currentHouseDrawElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(5) > span')
 		const currentHouseDraw = await (await currentHouseDrawElement.getProperty('textContent')).jsonValue()
 
 		// House consumption today
-		const totalHouseConsumptionElement = await popup.$('.animation > .bottomtext-info > div > .yongdian-info > div > span:nth-child(2)')
+		stage = "Getting house consumption today";
+		const totalHouseConsumptionElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(5) > div > div > p.info-val')
 		const totalHouseConsumption = await (await totalHouseConsumptionElement.getProperty('textContent')).jsonValue()
 
 		await browser.close()
@@ -150,10 +174,18 @@ async function scrapeData() {
 		}
 
 	} catch (e) {
+		if (debug) {
+			console.log("Error at stage " + stage);
+		}
 		console.log("Error - " + e.message)
-		// await browser.close()
+		await browser.close()
 		throw (e);
 	}
+}
+
+function trimAfterSpace(value) {
+	const [result] = value.split(' ');
+	return result
 }
 
 async function waitForSelectorWithRetries(page, selector, selectorDescription, maxRetries, timeoutms = 5000) {
