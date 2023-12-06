@@ -40,7 +40,7 @@ async function scrapeData() {
 
 	try {
 		const page = await browser.newPage();
-		await page.setViewport({ width: 1200, height: 1000 });
+		await page.setViewport({ width: 1920, height: 1000 });
 		await page.goto(url);
 
 		stage = "Waiting for login form";
