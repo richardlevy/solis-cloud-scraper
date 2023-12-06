@@ -120,7 +120,7 @@ async function scrapeData() {
 
 		// Today from grid
 		stage = "Getting todays grid import";
-		const todayFromElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(2) > div > div.el-carousel.el-carousel--horizontal > div > div.el-carousel__item.is-active.is-animating > div > p.info-val')
+		const todayFromElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(2) > div > div:nth-child(2) > p.info-val')
 		const todayFromGridFull = await (await todayFromElement.getProperty('textContent')).jsonValue()
 		const todayFromGrid = trimAfterSpace(todayFromGridFull)
 
