@@ -114,12 +114,12 @@ async function scrapeData() {
 
 		// Battery charging today
 		stage = "Getting todays charging";
-		const todaysChargingElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.capsule.capsule-l.capsule-charge > div:nth-child(2) > p.info-val')
+		const todaysChargingElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.capsule.capsule-l.capsule-discharge > div:nth-child(2) > p.info-val')
 		const todaysCharging = await (await todaysChargingElement.getProperty('textContent')).jsonValue()
 
 		// Battery discharge today
 		stage = "Getting todays discharge";
-		const todaysDischargingElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.capsule.capsule-l.capsule-charge > div:nth-child(3) > p.info-val')
+		const todaysDischargingElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.capsule.capsule-l.capsule-discharge > div:nth-child(3) > p.info-val')
 		const todaysDischarging = await (await todaysDischargingElement.getProperty('textContent')).jsonValue()
 
 		// Today from grid
