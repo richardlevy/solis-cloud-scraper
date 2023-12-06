@@ -85,7 +85,7 @@ async function scrapeData() {
 		let pages = await browser.pages();
 
 		let popup = pages[pages.length - 1];
-		await popup.setViewport({ width: 1200, height: 1000 });
+		await popup.setViewport({ width: 1920, height: 1000 });
 
 		stage = "Waiting for current station stats";
 		await waitForSelectorWithRetries(popup, '#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(1) > span', "Current stats diagram" , maxSelectorRetries )
