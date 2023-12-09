@@ -18,3 +18,7 @@ service.refresh.url = http://<your IP address>:5561/refresh
 refresh.interval-mins = 6
 refresh.start-hour = 6
 refresh.end-hour = 23
+
+# Scraper control
+solis.headless-browser = true
+solis.close-browser-on-error = true
