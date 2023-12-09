@@ -23,7 +23,6 @@ function propertyAuthoriser(username, password) {
 
 function getPropertyWithDefault(propertyName, defaultValue) {
 	const propertyValue = properties.get(propertyName)
-
 	return propertyValue === null ? defaultValue : propertyValue
 }
 
@@ -34,9 +33,6 @@ const maxSelectorRetries = properties.get("solis.maxSelectorRetries")
 
 const headlessBrowser = getPropertyWithDefault("solis.headless-browser", true)
 const closeBrowserOnError = getPropertyWithDefault("solis.close-browser-on-error", true)
-
-console.log("headless = " + headlessBrowser)
-console.log("close on error = " + closeBrowserOnError)
 
 async function scrapeData() {
 
