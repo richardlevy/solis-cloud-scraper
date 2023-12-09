@@ -21,10 +21,22 @@ function propertyAuthoriser(username, password) {
     return userMatches & passwordMatches
 }
 
+function getPropertyWithDefault(propertyName, defaultValue) {
+	const propertyValue = properties.get(propertyName)
+
+	return propertyValue === null ? defaultValue : propertyValue
+}
+
 const url = properties.get("solis.url")
 const username = properties.get("solis.username")
 const password = properties.get("solis.password")
 const maxSelectorRetries = properties.get("solis.maxSelectorRetries")
+
+const headlessBrowser = getPropertyWithDefault("solis.headless-browser", true)
+const closeBrowserOnError = getPropertyWithDefault("solis.close-browser-on-error", true)
+
+console.log("headless = " + headlessBrowser)
+console.log("close on error = " + closeBrowserOnError)
 
 async function scrapeData() {
 
@@ -34,11 +46,11 @@ async function scrapeData() {
 	const startTime = Date.now();
 
 	const browser = await puppeteer.launch({
-		headless:true,
+		headless:headlessBrowser,
 		args: ['--no-zygote', '--no-sandbox', '--window-size=1920,1080'],
 		    defaultViewport: {
-    		  width:1920,
-      		height:1080,
+    		 	width:1920,
+      			height:1080,
     		}
 	});
 
@@ -182,7 +194,9 @@ async function scrapeData() {
 			console.log("Error at stage " + stage);
 		}
 		console.log("Error - " + e.message)
-		await browser.close()
+		if (closeBrowserOnError) {
+			await browser.close()			
+		}
 		throw (e);
 	}
 }
