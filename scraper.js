@@ -137,7 +137,8 @@ async function scrapeData() {
 		const todayFromGrid = trimAfterSpace(todayFromGridFull)
 
 		// Today to grid
-		const todayToElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(2) > div > div.el-carousel.el-carousel--horizontal > div > div.el-carousel__item.is-active.is-animating > div > p.info-val')
+		stage = "Getting todays grid export";
+		const todayToElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(2) > div > div:nth-child(3) > p.info-val')
 		const todayToGridFull = await (await todayToElement.getProperty('textContent')).jsonValue()
 		const todayToGrid = trimAfterSpace(todayToGridFull)
 
