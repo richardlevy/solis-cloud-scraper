@@ -112,7 +112,7 @@ async function scrapeData() {
 
 		// Battery charge level now
 		stage = "Getting battery charge";
-		const batteryChargeElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.battery-icon-box > div > p.battery-num')
+		const batteryChargeElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(4) > div.battery-icon-box > div > p.battery-soc')
 		const batteryCharge = await (await batteryChargeElement.getProperty('textContent')).jsonValue()
 
 		// Battery consumption now
@@ -137,7 +137,6 @@ async function scrapeData() {
 		const todayFromGrid = trimAfterSpace(todayFromGridFull)
 
 		// Today to grid
-		stage = "Getting todays grid export";
 		const todayToElement = await popup.$('#general-situation > div > div.main > div.station-content > div.left-box > div.energy-storage-animation.gl-content2 > div:nth-child(2) > div > div > div:nth-child(2) > div > div:nth-child(3) > p.info-val')
 		const todayToGridFull = await (await todayToElement.getProperty('textContent')).jsonValue()
 		const todayToGrid = trimAfterSpace(todayToGridFull)
